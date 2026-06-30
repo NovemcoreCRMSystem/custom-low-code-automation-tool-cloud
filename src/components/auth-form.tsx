@@ -7,7 +7,6 @@ import { useState, type FormEvent } from 'react';
 import {
   createSessionPreviewFromForm,
   saveStoredAuthSnapshot,
-  AUTH_STORAGE_EVENT,
 } from '@/lib/auth/session';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
@@ -58,7 +57,6 @@ export function AuthForm({ mode }: AuthFormProps) {
         saveStoredAuthSnapshot(previewSession);
         setMessage('Mock mode: preview session saved locally.');
         setDone(true);
-        window.dispatchEvent(new Event(AUTH_STORAGE_EVENT));
         window.setTimeout(() => router.push('/dashboard'), 900);
         return;
       }
@@ -87,7 +85,6 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         setMessage('Supabase sign-in succeeded. Preview session updated locally.');
         setDone(true);
-        window.dispatchEvent(new Event(AUTH_STORAGE_EVENT));
         window.setTimeout(() => router.push('/dashboard'), 900);
         return;
       }
@@ -122,7 +119,6 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       setMessage('Supabase sign-up succeeded. Preview session updated locally.');
       setDone(true);
-      window.dispatchEvent(new Event(AUTH_STORAGE_EVENT));
       window.setTimeout(() => router.push('/dashboard'), 900);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Something went wrong.');
