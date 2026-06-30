@@ -62,6 +62,211 @@ select {
   margin: 0 auto;
 }
 
+.auth-page {
+  width: min(var(--max-width), calc(100% - 32px));
+  margin: 0 auto;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 0;
+}
+
+.auth-shell {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 540px);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.auth-copy,
+.auth-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, rgba(17, 28, 49, 0.94), rgba(10, 16, 29, 0.94));
+  box-shadow: var(--shadow);
+}
+
+.auth-copy {
+  padding: 32px;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.auth-copy h1 {
+  margin: 0;
+  font-size: clamp(2.3rem, 5vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+
+.auth-copy p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.auth-panel {
+  padding: 28px;
+}
+
+.auth-footnote {
+  font-size: 0.95rem;
+}
+
+.auth-footnote a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-decoration-color: rgba(154, 180, 255, 0.5);
+  text-underline-offset: 3px;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.status-card,
+.workspace-switcher,
+.auth-form {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(148, 163, 184, 0.04);
+  padding: 20px;
+}
+
+.status-card-compact,
+.workspace-switcher-compact {
+  padding: 16px;
+}
+
+.status-card-compact .status-card-grid {
+  grid-template-columns: 1fr;
+}
+
+.status-card-compact .status-card-actions,
+.workspace-switcher-compact .status-card-actions {
+  justify-content: flex-start;
+}
+
+.workspace-switcher-compact .field-input {
+  min-height: 40px;
+}
+
+.status-card-header,
+.auth-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.status-card-header h3,
+.auth-form-header h2 {
+  margin: 4px 0 0;
+  letter-spacing: -0.03em;
+}
+
+.status-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.status-card-grid strong,
+.status-card-grid p {
+  display: block;
+}
+
+.status-label,
+.field-label {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.status-note,
+.mock-banner,
+.auth-message,
+.sidebar-note a {
+  color: var(--muted);
+}
+
+.status-note {
+  margin: 16px 0 0;
+}
+
+.status-card-actions,
+.auth-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.button-small {
+  min-height: 38px;
+  padding: 0 14px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.field {
+  display: grid;
+}
+
+.field-span-2 {
+  grid-column: 1 / -1;
+}
+
+.field-input {
+  width: 100%;
+  min-height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(5, 11, 21, 0.6);
+  color: var(--text);
+  padding: 0 14px;
+  outline: none;
+}
+
+.field-input:focus {
+  border-color: rgba(124, 156, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(124, 156, 255, 0.12);
+}
+
+.mock-banner {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(251, 191, 36, 0.16);
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.auth-message {
+  margin: 14px 0 0;
+}
+
+.auth-message-success {
+  color: #8af0bd;
+}
+
+.auth-message-error {
+  color: #fecaca;
+}
+
+.workspace-switcher select {
+  margin-top: 0;
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
@@ -583,6 +788,15 @@ select {
     grid-template-columns: 1fr;
   }
 
+  .auth-shell,
+  .auth-grid,
+  .status-card-grid,
+  .field-grid,
+  .content-grid,
+  .landing-hero {
+    grid-template-columns: 1fr;
+  }
+
   .sidebar {
     position: static;
   }
@@ -591,16 +805,22 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .content-grid,
-  .landing-hero {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 720px) {
   .app-shell,
   .landing-page {
     width: min(100% - 20px, var(--max-width));
+  }
+
+  .auth-page {
+    width: min(100% - 20px, var(--max-width));
+    padding: 20px 0 32px;
+  }
+
+  .auth-copy,
+  .auth-panel {
+    padding: 20px;
   }
 
   .app-main,

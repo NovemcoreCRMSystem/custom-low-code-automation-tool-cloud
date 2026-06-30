@@ -1,6 +1,9 @@
 import Link from 'next/link';
 
+import { AuthStatusCard } from '@/components/auth-status-card';
 import { AppShell } from '@/components/app-shell';
+import { WorkspaceSwitcher } from '@/components/workspace-switcher';
+import { getInitialAuthSnapshot } from '@/lib/auth/session';
 import { connectedApps, dashboardStats, recentRuns } from '@/lib/mock-data';
 
 function statusClass(status: string) {
@@ -20,6 +23,8 @@ function statusClass(status: string) {
 }
 
 export default function DashboardPage() {
+  const session = getInitialAuthSnapshot();
+
   return (
     <AppShell
       title="Dashboard"
@@ -36,6 +41,24 @@ export default function DashboardPage() {
         </>
       }
     >
+      <section className="auth-grid">
+        <AuthStatusCard initialSession={session} />
+        <WorkspaceSwitcher initialSession={session} />
+      </section>
+
+      <section className="panel" style={{ marginTop: '16px' }}>
+        <div className="panel-header">
+          <div>
+            <p className="panel-kicker">Protected concept</p>
+            <h3>Session-gated access comes later</h3>
+          </div>
+        </div>
+        <p className="panel-copy">
+          This Phase 2 scaffold keeps auth mock-safe. The dashboard shows the user, organization, and workspace concept
+          now, while real protected routes and server-side session checks can be wired once Supabase is configured.
+        </p>
+      </section>
+
       <section className="stats-grid section-stack" aria-label="Dashboard statistics">
         {dashboardStats.map((stat) => (
           <article key={stat.label} className="metric-card">

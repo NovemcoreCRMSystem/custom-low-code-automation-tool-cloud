@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { AuthStatusCard } from '@/components/auth-status-card';
+import { WorkspaceSwitcher } from '@/components/workspace-switcher';
+import { getInitialAuthSnapshot } from '@/lib/auth/session';
 import { navigation } from '@/lib/mock-data';
 
 type AppShellProps = {
@@ -12,6 +15,8 @@ type AppShellProps = {
 };
 
 export function AppShell({ title, description, activePath, children, actions }: AppShellProps) {
+  const session = getInitialAuthSnapshot();
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -38,12 +43,19 @@ export function AppShell({ title, description, activePath, children, actions }: 
           })}
         </nav>
 
+        <AuthStatusCard initialSession={session} compact />
+
+        <WorkspaceSwitcher initialSession={session} compact />
+
         <div className="sidebar-note">
           <p className="sidebar-note-title">Safe by design</p>
           <ul>
             <li>Drafts only until user approval</li>
             <li>No production integrations yet</li>
             <li>Wrapper-first architecture</li>
+            <li>
+              <Link href="/auth/login">Open auth flow</Link>
+            </li>
           </ul>
         </div>
       </aside>
