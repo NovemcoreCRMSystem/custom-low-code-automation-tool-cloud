@@ -16,8 +16,13 @@ type WorkspaceSwitcherProps = {
 
 export function WorkspaceSwitcher({ initialSession, compact = false }: WorkspaceSwitcherProps) {
   const [session, setSession] = useState<AuthSnapshot>(initialSession);
+  const isMockSession = initialSession.source === 'mock';
 
   useEffect(() => {
+    if (!isMockSession) {
+      return;
+    }
+
     const syncFromStorage = () => {
       const stored = readStoredAuthSnapshot();
       if (stored) {
@@ -29,7 +34,7 @@ export function WorkspaceSwitcher({ initialSession, compact = false }: Workspace
     window.addEventListener(AUTH_STORAGE_EVENT, syncFromStorage);
 
     return () => window.removeEventListener(AUTH_STORAGE_EVENT, syncFromStorage);
-  }, []);
+  }, [isMockSession]);
 
   const activeWorkspace = useMemo(
     () => session.workspaces.find((workspace) => workspace.id === session.activeWorkspaceId) ?? session.workspaces[0],

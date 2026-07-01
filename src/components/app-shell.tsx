@@ -3,19 +3,21 @@ import type { ReactNode } from 'react';
 
 import { AuthStatusCard } from '@/components/auth-status-card';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
-import { getInitialAuthSnapshot } from '@/lib/auth/session';
+import type { AuthSnapshot } from '@/lib/auth/session';
+import { mockSession } from '@/lib/auth/mock-session';
 import { navigation } from '@/lib/mock-data';
 
 type AppShellProps = {
   title: string;
   description: string;
   activePath: string;
+  session?: AuthSnapshot;
   children: ReactNode;
   actions?: ReactNode;
 };
 
-export function AppShell({ title, description, activePath, children, actions }: AppShellProps) {
-  const session = getInitialAuthSnapshot();
+export function AppShell({ title, description, activePath, session, children, actions }: AppShellProps) {
+  const effectiveSession = session ?? mockSession;
 
   return (
     <div className="app-shell">
@@ -43,9 +45,9 @@ export function AppShell({ title, description, activePath, children, actions }: 
           })}
         </nav>
 
-        <AuthStatusCard initialSession={session} compact />
+        <AuthStatusCard initialSession={effectiveSession} compact />
 
-        <WorkspaceSwitcher initialSession={session} compact />
+        <WorkspaceSwitcher initialSession={effectiveSession} compact />
 
         <div className="sidebar-note">
           <p className="sidebar-note-title">Safe by design</p>

@@ -2,10 +2,26 @@ import Link from 'next/link';
 
 import { AuthForm } from '@/components/auth-form';
 import { AuthStatusCard } from '@/components/auth-status-card';
-import { getInitialAuthSnapshot } from '@/lib/auth/session';
+import { getServerAuthSnapshot } from '@/lib/auth/server-session';
 
-export default function SignupPage() {
-  const session = getInitialAuthSnapshot();
+type SignupPageProps = {
+  searchParams?: Promise<{ next?: string | string[] }>;
+};
+
+function resolveSafeNextPath(nextValue?: string | string[]): string {
+  const candidate = Array.isArray(nextValue) ? nextValue[0] : nextValue;
+
+  if (candidate && candidate.startsWith('/') && !candidate.startsWith('//')) {
+    return candidate;
+  }
+
+  return '/dashboard';
+}
+
+export default async function SignupPage({ searchParams }: SignupPageProps) {
+  const session = await getServerAuthSnapshot({ redirectIfAuthenticatedTo: '/dashboard' });
+  const query = searchParams ? await Promise.resolve(searchParams) : undefined;
+  const nextPath = resolveSafeNextPath(query?.next);
 
   return (
     <main className="auth-page">
@@ -26,7 +42,7 @@ export default function SignupPage() {
         </div>
 
         <div className="auth-panel">
-          <AuthForm mode="signup" />
+          <AuthForm mode="signup" nextPath={nextPath} />
         </div>
       </section>
     </main>

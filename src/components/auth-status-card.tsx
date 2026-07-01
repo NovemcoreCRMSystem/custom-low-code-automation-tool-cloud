@@ -16,8 +16,13 @@ type AuthStatusCardProps = {
 
 export function AuthStatusCard({ initialSession, compact = false }: AuthStatusCardProps) {
   const [session, setSession] = useState<AuthSnapshot>(initialSession);
+  const isMockSession = initialSession.source === 'mock';
 
   useEffect(() => {
+    if (!isMockSession) {
+      return;
+    }
+
     const syncFromStorage = () => {
       const stored = readStoredAuthSnapshot();
       if (stored) {
@@ -29,7 +34,7 @@ export function AuthStatusCard({ initialSession, compact = false }: AuthStatusCa
     window.addEventListener(AUTH_STORAGE_EVENT, syncFromStorage);
 
     return () => window.removeEventListener(AUTH_STORAGE_EVENT, syncFromStorage);
-  }, []);
+  }, [isMockSession]);
 
   const activeWorkspace = useMemo(
     () => session.workspaces.find((workspace) => workspace.id === session.activeWorkspaceId) ?? session.workspaces[0],
@@ -48,8 +53,12 @@ export function AuthStatusCard({ initialSession, compact = false }: AuthStatusCa
           <p className="card-kicker">Auth profile</p>
           <h3>{session.modeLabel}</h3>
         </div>
-        <span className={`badge ${session.source === 'mock' ? 'badge-warning' : 'badge-success'}`}>
-          {session.source === 'mock' ? 'Mock only' : 'Supabase ready'}
+        <span
+          className={`badge ${
+            session.source === 'mock' ? 'badge-warning' : session.signedIn ? 'badge-success' : 'badge-neutral'
+          }`}
+        >
+          {session.source === 'mock' ? 'Mock only' : session.signedIn ? 'Signed in' : 'Signed out'}
         </span>
       </div>
 

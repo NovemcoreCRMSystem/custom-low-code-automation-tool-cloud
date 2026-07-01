@@ -1,17 +1,18 @@
 import { AuthStatusCard } from '@/components/auth-status-card';
 import { AppShell } from '@/components/app-shell';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
-import { getInitialAuthSnapshot } from '@/lib/auth/session';
+import { getServerAuthSnapshot } from '@/lib/auth/server-session';
 import { settingsSections } from '@/lib/mock-data';
 
-export default function SettingsPage() {
-  const session = getInitialAuthSnapshot();
+export default async function SettingsPage() {
+  const session = await getServerAuthSnapshot({ redirectToLogin: '/auth/login?next=/settings' });
 
   return (
     <AppShell
       title="Settings"
       description="Workspace, safety, and usage settings for the Novemcore wrapper skeleton."
       activePath="/settings"
+      session={session}
       actions={<span className="button button-secondary" aria-disabled="true">Save changes</span>}
     >
       <section className="auth-grid">

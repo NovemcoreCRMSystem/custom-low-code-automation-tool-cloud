@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 
 import {
+  clearStoredAuthSnapshot,
   createSessionPreviewFromForm,
   saveStoredAuthSnapshot,
 } from '@/lib/auth/session';
@@ -15,9 +16,10 @@ type AuthFormMode = 'login' | 'signup';
 
 type AuthFormProps = {
   mode: AuthFormMode;
+  nextPath: string;
 };
 
-export function AuthForm({ mode }: AuthFormProps) {
+export function AuthForm({ mode, nextPath }: AuthFormProps) {
   const router = useRouter();
   const [name, setName] = useState('');
   const [organizationName, setOrganizationName] = useState('');
@@ -57,7 +59,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         saveStoredAuthSnapshot(previewSession);
         setMessage('Mock mode: preview session saved locally.');
         setDone(true);
-        window.setTimeout(() => router.push('/dashboard'), 900);
+        window.setTimeout(() => router.push(nextPath), 900);
         return;
       }
 
@@ -71,25 +73,15 @@ export function AuthForm({ mode }: AuthFormProps) {
           throw signInError;
         }
 
-        saveStoredAuthSnapshot(
-          createSessionPreviewFromForm({
-            name: name || 'Signed-in user',
-            email,
-            organizationName: organizationName || 'Novemcore Labs',
-            workspaceName: workspaceName || 'Growth Workspace',
-            workspaceDescription: workspaceDescription || 'Lead enrichment and outbound drafts',
-            source: 'supabase-ready',
-            note: 'Supabase sign-in succeeded. Session persistence will be wired later.',
-          }),
-        );
+        clearStoredAuthSnapshot();
 
-        setMessage('Supabase sign-in succeeded. Preview session updated locally.');
+        setMessage('Supabase sign-in succeeded.');
         setDone(true);
-        window.setTimeout(() => router.push('/dashboard'), 900);
+        window.setTimeout(() => router.push(nextPath), 900);
         return;
       }
 
-      const { error: signUpError } = await browserClient.auth.signUp({
+      const { data, error: signUpError } = await browserClient.auth.signUp({
         email,
         password,
         options: {
@@ -105,21 +97,16 @@ export function AuthForm({ mode }: AuthFormProps) {
         throw signUpError;
       }
 
-      saveStoredAuthSnapshot(
-        createSessionPreviewFromForm({
-          name: name || 'New user',
-          email,
-          organizationName: organizationName || 'New organization',
-          workspaceName: workspaceName || 'New workspace',
-          workspaceDescription: workspaceDescription || 'Preview workspace for the new account',
-          source: 'supabase-ready',
-          note: 'Supabase sign-up succeeded. Confirmation emails may still be required.',
-        }),
-      );
+      clearStoredAuthSnapshot();
 
-      setMessage('Supabase sign-up succeeded. Preview session updated locally.');
-      setDone(true);
-      window.setTimeout(() => router.push('/dashboard'), 900);
+      if (data.session) {
+        setMessage('Supabase sign-up succeeded.');
+        setDone(true);
+        window.setTimeout(() => router.push(nextPath), 900);
+        return;
+      }
+
+      setMessage('Supabase sign-up sent a confirmation email. Sign in after confirming your address.');
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Something went wrong.');
     } finally {

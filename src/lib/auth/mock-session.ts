@@ -38,6 +38,7 @@ export type MockSessionInput = {
   workspaceDescription?: string;
   source?: AuthSource;
   note?: string;
+  signedIn?: boolean;
 };
 
 export const mockWorkspaceOptions: MockWorkspace[] = [
@@ -81,6 +82,14 @@ export const mockSession: AuthSnapshot = {
 };
 
 export function createPreviewSession(input: MockSessionInput = {}): AuthSnapshot {
+  const signedIn = input.signedIn ?? true;
+  const modeLabel =
+    input.source === 'supabase-ready'
+      ? signedIn
+        ? 'Supabase session active'
+        : 'Supabase session not found'
+      : 'Mock mode';
+
   const workspaces = [
     {
       id: 'workspace-growth',
@@ -94,15 +103,17 @@ export function createPreviewSession(input: MockSessionInput = {}): AuthSnapshot
 
   return {
     source: input.source ?? 'mock',
-    modeLabel: input.source === 'supabase-ready' ? 'Supabase scaffold ready' : 'Mock mode',
+    modeLabel,
     note:
       input.note ??
-      'Mock session saved locally. Supabase env vars are optional for this scaffold and not required yet.',
-    signedIn: true,
+      (signedIn
+        ? 'Mock session saved locally. Supabase env vars are optional for this scaffold and not required yet.'
+        : 'No Supabase session found. Sign in to continue.'),
+    signedIn,
     user: {
-      name: input.name?.trim() || 'Sofia Novemcore',
-      email: input.email?.trim() || 'sofia@novemcore.example',
-      role: 'Workspace owner',
+      name: input.name?.trim() || (signedIn ? 'Sofia Novemcore' : 'Signed-out visitor'),
+      email: input.email?.trim() || (signedIn ? 'sofia@novemcore.example' : ''),
+      role: signedIn ? 'Workspace owner' : 'Signed out',
     },
     organization: {
       id: 'org-novemcore',
@@ -112,4 +123,15 @@ export function createPreviewSession(input: MockSessionInput = {}): AuthSnapshot
     workspaces,
     activeWorkspaceId: workspaces[0]?.id || 'workspace-growth',
   };
+}
+
+export function createSignedOutSession(input: MockSessionInput = {}): AuthSnapshot {
+  return createPreviewSession({
+    ...input,
+    source: 'supabase-ready',
+    signedIn: false,
+    name: input.name ?? 'Signed-out visitor',
+    email: input.email ?? '',
+    note: input.note ?? 'No Supabase session found. Sign in to continue.',
+  });
 }

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { AuthStatusCard } from '@/components/auth-status-card';
 import { AppShell } from '@/components/app-shell';
 import { WorkspaceSwitcher } from '@/components/workspace-switcher';
-import { getInitialAuthSnapshot } from '@/lib/auth/session';
+import { getServerAuthSnapshot } from '@/lib/auth/server-session';
 import { connectedApps, dashboardStats, recentRuns } from '@/lib/mock-data';
 
 function statusClass(status: string) {
@@ -22,14 +22,15 @@ function statusClass(status: string) {
   return 'badge badge-neutral';
 }
 
-export default function DashboardPage() {
-  const session = getInitialAuthSnapshot();
+export default async function DashboardPage() {
+  const session = await getServerAuthSnapshot({ redirectToLogin: '/auth/login?next=/dashboard' });
 
   return (
     <AppShell
       title="Dashboard"
       description="A concise view of workspace health, workflow drafts, and connected apps."
       activePath="/dashboard"
+      session={session}
       actions={
         <>
           <Link href="/templates" className="button button-secondary">
