@@ -1,9 +1,10 @@
 # AI REVIEW REQUEST
 
-Phase 2.4 auth smoke test summary:
+Phase 2.5 auth smoke test summary:
 
-- Manual local HTTP smoke test completed.
-- Fixed one boundary issue: the auth form now receives Supabase config from the server path instead of relying on client-only env lookup.
+- Local Supabase-aware smoke test completed with a temporary `.env.local`.
+- Missing-env mock fallback was verified after removing the temp env file.
+- Added `docs/SUPABASE_DEV_SETUP.md` for repeatable local setup.
 
 Checklist:
 
@@ -20,3 +21,4 @@ Checklist:
 Notes:
 
 - Temporary `.env.local` was used only for the local smoke test and removed afterwards.
+- The config helper can derive the project URL from the JWT-style public key pair during local testing when the supplied URL value is not a full `https://` URL.
