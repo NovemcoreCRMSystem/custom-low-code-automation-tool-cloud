@@ -2,10 +2,10 @@ import { cookies } from 'next/headers';
 
 import { createServerClient } from '@supabase/ssr';
 
-import { getSupabaseConfig } from './config';
+import { getSupabaseConfig, type SupabaseConfig } from './config';
 
-export async function getSupabaseServerClient() {
-  const config = getSupabaseConfig();
+export async function getSupabaseServerClient(configOverride?: SupabaseConfig | null) {
+  const config = configOverride ?? getSupabaseConfig();
 
   if (!config) {
     return null;

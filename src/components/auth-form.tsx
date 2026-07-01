@@ -10,16 +10,17 @@ import {
   saveStoredAuthSnapshot,
 } from '@/lib/auth/session';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
+import type { SupabaseConfig } from '@/lib/supabase/config';
 
 type AuthFormMode = 'login' | 'signup';
 
 type AuthFormProps = {
   mode: AuthFormMode;
   nextPath: string;
+  supabaseConfig: SupabaseConfig | null;
 };
 
-export function AuthForm({ mode, nextPath }: AuthFormProps) {
+export function AuthForm({ mode, nextPath, supabaseConfig }: AuthFormProps) {
   const router = useRouter();
   const [name, setName] = useState('');
   const [organizationName, setOrganizationName] = useState('');
@@ -34,7 +35,7 @@ export function AuthForm({ mode, nextPath }: AuthFormProps) {
 
   const title = mode === 'login' ? 'Sign in' : 'Create account';
   const buttonLabel = mode === 'login' ? 'Continue to dashboard' : 'Create preview account';
-  const canUseSupabase = isSupabaseConfigured();
+  const canUseSupabase = Boolean(supabaseConfig);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,7 +44,7 @@ export function AuthForm({ mode, nextPath }: AuthFormProps) {
     setMessage('');
 
     try {
-      const browserClient = getSupabaseBrowserClient();
+      const browserClient = getSupabaseBrowserClient(supabaseConfig);
 
       if (!browserClient || !canUseSupabase) {
         const previewSession = createSessionPreviewFromForm({

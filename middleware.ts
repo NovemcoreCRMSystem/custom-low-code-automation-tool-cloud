@@ -10,6 +10,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-novemcore-supabase-url', config.url);
+  requestHeaders.set('x-novemcore-supabase-anon-key', config.anonKey);
+
   const cookiesToSet: Array<{ name: string; value: string; options?: any }> = [];
 
   const supabase = createServerClient(config.url, config.anonKey, {
@@ -31,7 +35,7 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/settings');
   const isAuthRoute = pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup');
 
-  let response = NextResponse.next({ request });
+  let response = NextResponse.next({ request: { headers: requestHeaders } });
 
   if (isProtectedRoute && !user) {
     const loginUrl = request.nextUrl.clone();

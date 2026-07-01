@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import { headers } from 'next/headers';
 
 import { AuthForm } from '@/components/auth-form';
 import { AuthStatusCard } from '@/components/auth-status-card';
 import { getServerAuthSnapshot } from '@/lib/auth/server-session';
+import { getSupabaseConfigFromHeaders } from '@/lib/supabase/config';
 
 type SignupPageProps = {
   searchParams?: Promise<{ next?: string | string[] }>;
@@ -19,7 +21,9 @@ function resolveSafeNextPath(nextValue?: string | string[]): string {
 }
 
 export default async function SignupPage({ searchParams }: SignupPageProps) {
-  const session = await getServerAuthSnapshot({ redirectIfAuthenticatedTo: '/dashboard' });
+  const requestHeaders = await headers();
+  const supabaseConfig = getSupabaseConfigFromHeaders(requestHeaders);
+  const session = await getServerAuthSnapshot({ redirectIfAuthenticatedTo: '/dashboard', supabaseConfig });
   const query = searchParams ? await Promise.resolve(searchParams) : undefined;
   const nextPath = resolveSafeNextPath(query?.next);
 
@@ -42,7 +46,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
         </div>
 
         <div className="auth-panel">
-          <AuthForm mode="signup" nextPath={nextPath} />
+          <AuthForm mode="signup" nextPath={nextPath} supabaseConfig={supabaseConfig} />
         </div>
       </section>
     </main>

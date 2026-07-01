@@ -1,13 +1,14 @@
 import { redirect } from 'next/navigation';
 
 import { getSupabaseServerClient } from '@/lib/supabase/server';
-import { getSupabaseConfig } from '@/lib/supabase/config';
+import { getSupabaseConfig, type SupabaseConfig } from '@/lib/supabase/config';
 
 import { createPreviewSession, createSignedOutSession, mockSession, type AuthSnapshot } from './mock-session';
 
 type ServerAuthOptions = {
   redirectToLogin?: string;
   redirectIfAuthenticatedTo?: string;
+  supabaseConfig?: SupabaseConfig | null;
 };
 
 function getString(value: unknown, fallback = ''): string {
@@ -15,11 +16,13 @@ function getString(value: unknown, fallback = ''): string {
 }
 
 export async function getServerAuthSnapshot(options: ServerAuthOptions = {}): Promise<AuthSnapshot> {
-  if (!getSupabaseConfig()) {
+  const config = options.supabaseConfig ?? getSupabaseConfig();
+
+  if (!config) {
     return mockSession;
   }
 
-  const supabase = await getSupabaseServerClient();
+  const supabase = await getSupabaseServerClient(config);
 
   if (!supabase) {
     return mockSession;

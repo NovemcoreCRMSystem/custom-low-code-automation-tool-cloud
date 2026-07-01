@@ -1,12 +1,12 @@
 import { createBrowserClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
-import { getSupabaseConfig } from './config';
+import { getSupabaseConfig, type SupabaseConfig } from './config';
 
 let browserClient: SupabaseClient | null = null;
 
-export function getSupabaseBrowserClient(): SupabaseClient | null {
-  const config = getSupabaseConfig();
+export function getSupabaseBrowserClient(configOverride?: SupabaseConfig | null): SupabaseClient | null {
+  const config = configOverride ?? getSupabaseConfig();
 
   if (!config) {
     return null;
