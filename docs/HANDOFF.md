@@ -16,41 +16,45 @@ C:\Dev\custom-low-code-automation-tool-cloud
 
 The project is in planning/setup stage only.
 
-The only intended initial files are:
+The intended starter docs are:
 
 ```text
-docs/MASTER_PLAN.md
 docs/PROJECT_CONTEXT.md
 docs/HANDOFF.md
+docs/NEXT_ACTION.md
+docs/AI_REVIEW_REQUEST.md
+docs/WORK_LOG.md
+docs/MASTER_PLAN.md
 README.md
 ```
 
 No real implementation should exist yet.
+
+## Reporting workflow
+
+After every normal task, including when resuming an older session:
+
+1. Overwrite `docs/AI_REVIEW_REQUEST.md` with a short review summary.
+2. Append one dated line to `docs/WORK_LOG.md`.
+3. Overwrite `docs/NEXT_ACTION.md` with the next recommended action.
+
+These files are updated manually, not automatically.
+
+Keep them short and do not create per-session report files.
 
 ## What the next Opencode session must do
 
 Read:
 
 ```text
-docs/MASTER_PLAN.md
 docs/PROJECT_CONTEXT.md
 docs/HANDOFF.md
+docs/NEXT_ACTION.md
 ```
 
-Do not code yet.
+Read `docs/MASTER_PLAN.md` only when starting a major new phase or when the task is unclear.
 
-First produce:
-
-1. current file tree
-2. understanding of the project
-3. safest first implementation phase
-4. exact files recommended for the next step
-5. files that must not be touched
-6. risks
-7. rollback plan
-8. test/check plan
-
-Wait for explicit approval before editing files.
+Follow `docs/NEXT_ACTION.md` for the active task.
 
 ## First recommended implementation phase
 
